@@ -42,6 +42,23 @@ export const RegisterUser = async(req,res)=>{
 // login
 
 export const LoginUser = async(req,res)=>{
-res.json({msg:'login user '})
+  const {email,password} = req.body
+try {
+   if(!email || !password){
+    res.json({msg:'Fill in all fields'})
+   }
+   const newEmail = email.toLowerCase()
+   const user = await User.findOne({email:newEmail})
+   if(!user){
+    res.json({msg:'Invalid credentials'})
+   }
+   const comparePass = await bcrypt.compare(password,user.password)
+   if(!comparePass){
+    res.json({msg:'Invalid credentials'})
+   }
+   res.json(user)
+} catch (error) {
+  console.log(error)
+}
 }
 
