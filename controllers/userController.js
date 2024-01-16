@@ -3,54 +3,76 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import {v4 as uuid} from 'uuid'
 import path from 'path'
-// register 
-export const RegisterUser = async(req,res)=>{
-  const {name,email,password} = req.body
-  const {avatar} = req.files
+import { fileURLToPath } from 'url'
+
+export const RegisterUser = async (req, res) => {
+  const { name, email, password } = req.body;
+  const avatar = req.files?.avatar;
+
   try {
-      if(!name || !email || !password ){
-        res.json({msg:'Fill in all fields'})
-      }
-      // avatar file
-      if(!avatar){
-        res.json({msg:'Please choose an image'})
-      }
-      if(avatar.size){
-        res.json({msg:'Profile picture too big. Should be less than 500kb'})
-      }
-      let fileName
-      fileName = avatar.name
-      let spilltedFilename = fileName.split('.')
-      let newFilename = spilltedFilename[0] + uuid() + spilltedFilename[spilltedFilename.length -1]
-      avatar.mv(path.join(__dirname, '..','uploads',fileName),async(err)=>{
-        if(err){
-          res.json({msg:'there is some error in avatar'})
-        }
-      })
+    if (!name || !email || !password) {
+      res.json({ msg: 'Fill in all fields' });
+      return;
+    }
 
+    // avatar file
+    if (!avatar) {
+      res.json({ msg: 'Please choose an image' });
+      return;
+    }
 
+    if (avatar.size > 500000) {
+      res.json({ msg: 'Profile picture too big. Should be less than 500kb' });
+      return;
+    }
 
+    let fileName = avatar.name;
+    let spilltedFilename = fileName.split('.');
+    let newFilename = spilltedFilename[0] + uuid() + spilltedFilename[spilltedFilename.length - 1];
 
-      const newEmail = email.toLowerCase()
-      const emailExist = await User.findOne({email:newEmail})
-      if(emailExist){
-        res.json({msg:'Email already exists'})
+    const newEmail = email.toLowerCase();
+    const emailExist = await User.findOne({ email: newEmail });
+
+    if (emailExist) {
+      res.json({ msg: 'Email already exists' });
+      return;
+    }
+
+    if (password.trim().length < 6) {
+      res.json({ msg: 'Password should be at least 6 characters' });
+      return;
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPass = await bcrypt.hash(password, salt);
+
+    // Calculate the directory path using fileURLToPath
+    const currentFilePath = fileURLToPath(import.meta.url);
+    const currentDir = path.dirname(currentFilePath);
+
+    const uploadsPath = path.resolve(currentDir, 'uploads');
+    const destinationPath = path.join(uploadsPath, fileName);
+
+    avatar.mv(destinationPath, async (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ msg: 'Error uploading avatar' });
+      } else {
+        const newUser = await User.create({
+          name,
+          email,
+          password: hashedPass,
+          avatar: newFilename,
+        });
+        res.json(newUser);
       }
-      if(password.trim().length<6){
-        res.json({msg:'password should be at least 6 characters'})
-      }
-      const salt = await bcrypt.genSalt(10)
-      const hashedPass = await bcrypt.hash(password,salt)
-      const newUser = await User.create({
-        name,
-        email:newEmail,
-        password:hashedPass
-      })
-      res.json(newUser)
+    });
   } catch (error) {
-    console.log(error)
+    console.error(error);
+    res.status(500).json({ msg: 'Internal Server Error' });
   }
-}
+};
+
 
 
 
