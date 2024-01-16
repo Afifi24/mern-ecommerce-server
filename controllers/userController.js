@@ -1,11 +1,11 @@
-import User from '../models/userModel.js'
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-import {v4 as uuid} from 'uuid'
-import path from 'path'
-import { fileURLToPath } from 'url'
+const User =  require('../models/userModel')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const {v4 : uuid} = require('uuid')
+const path = require("path");
 
-export const RegisterUser = async (req, res) => {
+
+ const RegisterUser = async (req, res) => {
   const { name, email, password } = req.body;
   const avatar = req.files?.avatar;
 
@@ -46,14 +46,9 @@ export const RegisterUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
 
-    // Calculate the directory path using fileURLToPath
-    const currentFilePath = fileURLToPath(import.meta.url);
-    const currentDir = path.dirname(currentFilePath);
+   
 
-    const uploadsPath = path.resolve(currentDir, 'uploads');
-    const destinationPath = path.join(uploadsPath, fileName);
-
-    avatar.mv(destinationPath, async (err) => {
+    avatar.mv(path.join(__dirname, '..', 'uploads',newFilename), async (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ msg: 'Error uploading avatar' });
@@ -84,7 +79,7 @@ export const RegisterUser = async (req, res) => {
 
 // login
 
-export const LoginUser = async(req,res)=>{
+ const LoginUser = async(req,res)=>{
   const {email,password} = req.body
 try {
    if(!email || !password){
@@ -108,3 +103,5 @@ try {
 }
 }
 
+
+module.exports = {RegisterUser,LoginUser}
