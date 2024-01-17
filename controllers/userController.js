@@ -11,18 +11,18 @@ const path = require("path");
 
   try {
     if (!name || !email || !password) {
-      res.json({ msg: 'Fill in all fields' });
+      res.json({ error: 'Fill in all fields' });
       return;
     }
 
     // avatar file
     if (!avatar) {
-      res.json({ msg: 'Please choose an image' });
+      res.json({ error: 'Please choose an image' });
       return;
     }
 
     if (avatar.size > 500000) {
-      res.json({ msg: 'Profile picture too big. Should be less than 500kb' });
+      res.json({ error: 'Profile picture too big. Should be less than 500kb' });
       return;
     }
 
@@ -30,16 +30,16 @@ const path = require("path");
     let spilltedFilename = fileName.split('.');
     let newFilename = spilltedFilename[0] + uuid() + spilltedFilename[spilltedFilename.length - 1];
 
-    const newEmail = email.toLowerCase();
+    const newEmail = email.toLocaleLowerCase();
     const emailExist = await User.findOne({ email: newEmail });
 
     if (emailExist) {
-      res.json({ msg: 'Email already exists' });
+      res.json({ error: 'Email already exists' });
       return;
     }
 
     if (password.trim().length < 6) {
-      res.json({ msg: 'Password should be at least 6 characters' });
+      res.json({ error: 'Password should be at least 6 characters' });
       return;
     }
 
@@ -51,7 +51,7 @@ const path = require("path");
     avatar.mv(path.join(__dirname, '..', 'uploads',newFilename), async (err) => {
       if (err) {
         console.error(err);
-        res.status(500).json({ msg: 'Error uploading avatar' });
+        res.status(500).json({ error: 'Error uploading avatar' });
       } else {
         const newUser = await User.create({
           name,
@@ -64,7 +64,7 @@ const path = require("path");
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ msg: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -83,16 +83,16 @@ const path = require("path");
   const {email,password} = req.body
 try {
    if(!email || !password){
-    res.json({msg:'Fill in all fields'})
+    res.json({error:'Fill in all fields'})
    }
-   const newEmail = email.toLowerCase()
+   const newEmail = email.toLocaleLowerCase()
    const user = await User.findOne({email:newEmail})
    if(!user){
-    res.json({msg:'Invalid credentials'})
+    res.json({error:'User not found'})
    }
    const comparePass = await bcrypt.compare(password,user.password)
    if(!comparePass){
-    res.json({msg:'Invalid credentials'})
+    res.json({error:'Password does not match'})
    }
   //  add token
    const {_id:id,name} = user
