@@ -4,6 +4,8 @@ const cors = require('cors')
 const connectDB =  require('./config/db')
 const upload = require('express-fileupload')
 const userRouter = require('./routes/userRoutes')
+const productRouter = require('./routes/productRoutes')
+const verifyToken = require('./middlware/auth')
 
 
 dotenv.config()
@@ -35,5 +37,6 @@ app.listen(port,()=>{
 // routes
 
 app.use('/ecommerce',userRouter)
+app.use('/product',productRouter)
 
 
