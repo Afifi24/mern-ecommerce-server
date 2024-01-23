@@ -1,0 +1,1 @@
+const newsLetter = require('../models/newsletter')
