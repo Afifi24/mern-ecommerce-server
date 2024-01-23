@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const newsLetter = mongoose.Schema({
+const newsLetterSchema = mongoose.Schema({
     email:{
         type:String,
         required:true,
@@ -8,4 +8,4 @@ const newsLetter = mongoose.Schema({
 })
 
 
-module.exports = mongoose.model('NewsLetter',newsLetter)
+module.exports = mongoose.model('NewsLetter',newsLetterSchema)
