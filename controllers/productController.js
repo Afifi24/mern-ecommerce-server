@@ -6,7 +6,12 @@ const Product = require('../models/productModel')
 const AddProduct = async(req,res)=>{
     try {
         const {title,price,quantity,image} =req.body
-        res.json({error:'add product '})
+        const newProduct = await Product.create({
+            title,
+            price,
+            quantity
+        })
+        res.json(newProduct)
     } catch (error) {
         console.log(error)
     }

@@ -37,6 +37,6 @@ app.listen(port,()=>{
 // routes
 
 app.use('/ecommerce',userRouter)
-app.use('/product',productRouter)
+app.use('/product',verifyToken,productRouter)
 
 
