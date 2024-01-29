@@ -9,7 +9,8 @@ const AddProduct = async(req,res)=>{
         const newProduct = await Product.create({
             title,
             price,
-            quantity
+            quantity,
+            user:req.user.id
         })
         res.json(newProduct)
     } catch (error) {
@@ -18,10 +19,10 @@ const AddProduct = async(req,res)=>{
 }
 
 
-// get product
+// get products
 const GetProduct = async(req,res)=>{
     try {
-        const {id} = req.user.id
+        const id = req.user.id
         const product = await Product.find({user:id})
         res.status(200).json(product)
        
@@ -30,7 +31,7 @@ const GetProduct = async(req,res)=>{
     }
 }
 
-// get product
+// update product
 const UpdateProduct = async(req,res)=>{
     try {
         res.json({error:'update product '})
@@ -40,7 +41,7 @@ const UpdateProduct = async(req,res)=>{
 }
 
 
-// get product
+// delete product
 const DeleteProduct = async(req,res)=>{
     try {
         res.json({error:' delete product '})
