@@ -5,14 +5,26 @@ const Product = require('../models/productModel')
 
 const AddProduct = async(req,res)=>{
     try {
-        const {title,price,quantity,image} =req.body
-        const newProduct = await Product.create({
-            title,
-            price,
-            quantity,
-            user:req.user.id
-        })
-        res.json(newProduct)
+        const {title,price,quantity} =req.body
+        // add image here
+        const imageProduct = await req.files
+        imageProduct.mv(path.join(__dirname, '..', 'uploads',newFilename), async (err) => {
+            if (err) {
+              console.error(err);
+              res.status(500).json({ error: 'Error uploading avatar' });
+            } else {
+                const newProduct = await Product.create({
+                    title,
+                    price,
+                    quantity,
+                    user:req.user.id,
+                    imageProduct
+
+                })
+              res.json(newProduct);
+            }
+          })
+        
     } catch (error) {
         console.log(error)
     }
