@@ -7,8 +7,8 @@ const AddProduct = async(req,res)=>{
     try {
         const {title,price,quantity} =req.body
         // add image here
-        const imageProduct = await req.files
-        imageProduct.mv(path.join(__dirname, '..', 'uploads',newFilename), async (err) => {
+        const image = await req.files
+        image.mv(path.join(__dirname, '..', 'uploads',newFilename), async (err) => {
             if (err) {
               console.error(err);
               res.status(500).json({ error: 'Error uploading avatar' });
@@ -18,7 +18,7 @@ const AddProduct = async(req,res)=>{
                     price,
                     quantity,
                     user:req.user.id,
-                    imageProduct
+                    image
 
                 })
               res.json(newProduct);
