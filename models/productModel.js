@@ -15,11 +15,15 @@ const productSchema = mongoose.Schema({
         type:Number,
         required:true,
     },
-    image:{
+    // image:{
+    //     type:String,
+    //     required:true,
+    // },
+    quantity:{
         type:String,
         required:true,
     },
-    quantity:{
+    link:{
         type:String,
         required:true,
     }
