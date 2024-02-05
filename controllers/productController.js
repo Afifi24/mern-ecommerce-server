@@ -12,7 +12,8 @@ const AddProduct = async (req, res) => {
             price,
             quantity,
             user: req.user.id, 
-            link
+            link,
+            
         });
         res.json(newProduct)
 
@@ -38,10 +39,25 @@ const GetProduct = async(req,res)=>{
 
 // update product
 const UpdateProduct = async(req,res)=>{
+    const {id} = req.params
     try {
-        res.json({error:'update product '})
+        const product = await Product.findById(id)
+        if(!product){
+            res.status(400).json({error:'product not found'})
+        }
+        if(!req.user){
+            res.json({error:'user not found'})
+        }
+        if(product.user.toString() !== req.user.id){
+            res.json({
+                error:'user not authorized'
+            })
+        }
+        const updateProduct = await Product.findByIdAndUpdate(id,req.body,{new:true})
+        res.status(201).json(updateProduct)
+        
     } catch (error) {
-        console.log(error)
+        res.status(500).json({error:error.message})
     }
 }
 
@@ -50,13 +66,13 @@ const UpdateProduct = async(req,res)=>{
 
 
 
-export const DeleteProduct = async (req,res)=>{
+ const DeleteProduct = async (req,res)=>{
     const {id} = req.params
 
     try {
         const product = await Product.findById(id)
         if(!product){
-            res.status(400).json({error:'Note not found'})
+            res.status(400).json({error:'Product not found'})
         }
         if(!req.user){
             res.json({error:'user not found'})
@@ -68,7 +84,7 @@ export const DeleteProduct = async (req,res)=>{
         }
 
         const deleteProduct = await Product.findByIdAndDelete(id,req.body,{new:true})
-        res.status(200).json(deleteNote)
+        res.status(200).json(deleteProduct)
     } catch (error) {
         res.status(500).json({error:error.message})
         
