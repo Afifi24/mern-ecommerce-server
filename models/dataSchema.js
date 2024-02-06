@@ -1,12 +1,13 @@
-const mongoose = require('mongoose')
 
-const dataSchem = mongoose.Schema({
-    data:{
-        type:Array,
-        default:[]
-    }
-})
+const mongoose = require('mongoose');
 
-module.exports = mongoose.model('Data',dataSchem)
+const dataSchema = mongoose.Schema({
+  title: String,
+  price: Number,
+  oldprice: Number,
+  desc: String,
+  quantity: Number,
+  link: String,
+});
 
-
+module.exports = mongoose.model('Data', dataSchema);
