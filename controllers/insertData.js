@@ -1,5 +1,5 @@
 const Data = require('../models/dataSchema')
-const men = require('../config/data')
+const {men,women,kids,newCollections} = require('../config/data')
 
 const insertData = async(req,res)=>{
     try {
