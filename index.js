@@ -48,20 +48,20 @@ app.post('/create',async(req,res)=>{
         const session = await stripe.checkout.sessions.create({
             payment_method_types:['card'],
             mode:'payment',
-            line_items:req.body.items.map(item=>{
+            line_items:req.body.elements.map(item=>{
                 return{
                     price_data:{
-                        currency:'MAD',
+                        currency:'USD',
                         product_data:{
-                            name:item.name
+                            name:item.title
                         },
                         unit_amount:(item.price)*100
                     },
                     quantity:item.quantity
                 }
             }),
-            // succes_url:'http://localhost:5173/success',
-            // cancel_url:'http://localhost:5173/cancel',
+            success_url:'http://localhost:5173/success',
+            cancel_url:'http://localhost:5173/cancel',
         })
         res.json({url:session.url})
     } catch (error) {
