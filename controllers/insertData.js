@@ -42,7 +42,7 @@ const getWomenData = async(req,res)=>{
 // child
 const insertChildData = async(req,res)=>{
     try {
-        childSchema.insertMany(women)
+        childSchema.insertMany(kids)
         res.json('data posted')
     } catch (error) {
         console.log(error)
@@ -59,7 +59,7 @@ const getChildData = async(req,res)=>{
 // newcollections
 const insertnewCollectionData = async(req,res)=>{
     try {
-        newCollectionSchema.insertMany(women)
+        newCollectionSchema.insertMany(newCollections)
         res.json('data posted')
     } catch (error) {
         console.log(error)
